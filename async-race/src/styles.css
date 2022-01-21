@@ -126,3 +126,58 @@ h2{
     height: 30px;
     font-size: 25px;
 }
+
+.select-buttons{
+    display: flex;
+    flex-flow: row;
+    width: 500px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h3{
+    color: rgb(252, 188, 69);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.car-section{
+    display: flex;
+    flex-flow: column;
+}
+
+.starter-box{
+    display: flex;
+    flex-flow: row;
+    width: 100px;
+    justify-content: space-between;
+}
+
+.start{
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    border: green 2px solid;
+    box-sizing: border-box;
+    border-radius: 12px;
+    color: green;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.stop{
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    border: red 2px solid;
+    box-sizing: border-box;
+    border-radius: 12px;
+    color: red;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
