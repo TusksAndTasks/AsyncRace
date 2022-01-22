@@ -14,14 +14,23 @@ class Render {
   renderView() {
     if (dataStorage.view === 'garage') {
       this.renderGarage();
-      this.createCars();
+      this.updateCars();
       listener.setViewListeners();
       listener.setCreateListener();
+      listener.setUpdateListener();
+      listener.setGenerateListener();
+      listener.setPageListeners();
     }
     if (dataStorage.view === 'winners') {
       this.renderWinners();
       listener.setViewListeners();
     }
+  }
+
+  updateCars() {
+    this.createCars()
+      .then(() => listener.setSelectListeners())
+      .then(() => listener.setRemoveListeners());
   }
 
   renderGarage() {
@@ -33,26 +42,26 @@ class Render {
   </header>
   <div class="control-panel">
       <div class="create-panel">
-          <input type="text" class="text-input" placeholder="Enter car model" id="create-text">
-          <input type="color" class="color-input" value="#000000" id="create-color">
+          <input type="text" class="text-input" placeholder="Enter car model" id="create-text" value="${dataStorage.createTextValue}" autocomplete="off">
+          <input type="color" class="color-input" value="${dataStorage.createColorValue}" id="create-color">
           <div class="commit-button" id="create">Create</div>
       </div>
       <div class="update-panel">
-          <input type="text" class="text-input">
-          <input type="color" class="color-input" value="#000000">
-          <div class="commit-button">Update</div>
+          <input type="text" class="text-input" placeholder="Change car model" id="update-text" value="${dataStorage.updateTextValue}" autocomplete="off">
+          <input type="color" class="color-input" value="${dataStorage.updateColorValue}" id="update-color">
+          <div class="commit-button" id="update">Update</div>
       </div>
       <div class="main-panel">
           <div class="nav-button">Race</div>
           <div class="nav-button">Reset</div>
-          <div class="commit-button">Generate cars</div>
+          <div class="commit-button" id="generate">Generate cars</div>
       </div>
   </div>
   <div class="garage-section">
   </div>
   <div class="page-select">
-      <div class="commit-button">Prev</div>
-      <div class="commit-button">Next</div>
+      <div class="commit-button" id="prev">Prev</div>
+      <div class="commit-button" id="next">Next</div>
   </div>`;
   }
 
@@ -92,18 +101,18 @@ class Render {
     const cars = await apiController.getGaragePage(dataStorage.garagePage);
     const garageSection = document.querySelector('.garage-section') as HTMLElement;
     console.log(cars);
-    garageSection.innerHTML = `<h1>Garage (${((cars as unknown) as Array<Car>).length})</h1>
+    garageSection.innerHTML = `<h1>Garage (${dataStorage.carCount})</h1>
     <h2>Page #${dataStorage.garagePage}</h2>`;
 
     ((cars as unknown) as Array<Car>).forEach(
       (car: Car) =>
         (garageSection.innerHTML += `<div class="car-section">
-    <div class="select-buttons">
-        <div class="commit-button">Select</div>
-        <div class="commit-button">Remove</div>
+    <div class="select-buttons" id="select-${car.id}">
+        <div class="commit-button" data-select="${car.id}">Select</div>
+        <div class="commit-button" data-remove="${car.id}">Remove</div>
         <h3>${car.name}</h3>
     </div>
-    <div class="starter-box" id="${car.id}">
+    <div class="starter-box" id="start-${car.id}">
         <div class="start">A</div>
         <div class="stop">B</div>
     </div>
