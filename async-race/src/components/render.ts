@@ -20,6 +20,8 @@ class Render {
       listener.setUpdateListener();
       listener.setGenerateListener();
       listener.setPageListeners();
+      listener.setRaceListener();
+      listener.setRaceResetListener();
     }
     if (dataStorage.view === 'winners') {
       this.renderWinners();
@@ -30,7 +32,9 @@ class Render {
   updateCars() {
     this.createCars()
       .then(() => listener.setSelectListeners())
-      .then(() => listener.setRemoveListeners());
+      .then(() => listener.setRemoveListeners())
+      .then(() => listener.setDriveListeners())
+      .then(() => listener.setStopListeners());
   }
 
   renderGarage() {
@@ -52,8 +56,8 @@ class Render {
           <div class="commit-button" id="update">Update</div>
       </div>
       <div class="main-panel">
-          <div class="nav-button">Race</div>
-          <div class="nav-button">Reset</div>
+          <div class="nav-button" id="race">Race</div>
+          <div class="nav-button disabledButton" id="reset">Reset</div>
           <div class="commit-button" id="generate">Generate cars</div>
       </div>
   </div>
@@ -113,8 +117,8 @@ class Render {
         <h3>${car.name}</h3>
     </div>
     <div class="starter-box" id="start-${car.id}">
-        <div class="start">A</div>
-        <div class="stop">B</div>
+        <div class="start" data-start="${car.id}">A</div>
+        <div class="stop disabled" data-stop="${car.id}">B</div>
     </div>
       <?xml version="1.0" encoding="utf-8"?>
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 300 20" xml:space="preserve"><style type="text/css">.st0{fill-rule:evenodd;clip-rule:evenodd;}</style>

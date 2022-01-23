@@ -1,5 +1,7 @@
 import './styles.css';
 import { render } from './components/render';
-import { randomiser } from './components/randomiser';
+import { fpsCounter } from './components/fps';
+
+fpsCounter.refreshLoop();
 
 render.renderView();

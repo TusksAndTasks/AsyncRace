@@ -181,3 +181,13 @@ h3{
     align-items: center;
     cursor: pointer;
 }
+
+.disabled{
+    border-color: grey;
+    color: grey;
+}
+
+.disabledButton{
+    background-color: rgb(70, 70, 70);
+    color: white;
+}

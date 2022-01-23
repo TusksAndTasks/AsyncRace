@@ -1,5 +1,6 @@
 import { dataStorage } from './storage';
 import { Car } from './interfaces';
+import { EngineStatus } from './interfaces';
 
 class ApiControls {
   async getGaragePage(page: number): Promise<void | Array<Car>> {
@@ -64,6 +65,45 @@ class ApiControls {
     try {
       await fetch(`http://127.0.0.1:3000/garage/${id}`, {
         method: 'DELETE',
+      });
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async startEngine(id: number) {
+    try {
+      const res = await fetch(`http://127.0.0.1:3000/engine?id=${id}&status=started`, {
+        method: 'PATCH',
+      });
+      if (res.ok) {
+        return (await res.json()) as EngineStatus;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async checkEngine(id: number) {
+    try {
+      const res = await fetch(`http://127.0.0.1:3000/engine?id=${id}&status=drive`, {
+        method: 'PATCH',
+      });
+      if (res.status === 500) {
+        return true;
+      }
+      if (res.status === 200) {
+        return false;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async stopEngine(id: number) {
+    try {
+      const res = await fetch(`http://127.0.0.1:3000/engine?id=${id}&status=stopped`, {
+        method: 'PATCH',
       });
     } catch (err) {
       throw err;

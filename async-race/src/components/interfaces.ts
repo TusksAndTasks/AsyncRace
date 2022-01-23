@@ -8,3 +8,8 @@ export interface RandomCarParts {
   name: string;
   color: string;
 }
+
+export interface EngineStatus {
+  velocity: number;
+  distance: number;
+}

@@ -19,6 +19,14 @@ class Storage {
 
   currentCar: number;
 
+  fps: number;
+
+  stopCar: Array<number>;
+
+  stopped: boolean;
+
+  finished: Array<number>;
+
   constructor() {
     this.carCount = 0;
     this.garagePage = 1;
@@ -30,6 +38,10 @@ class Storage {
     this.updateColorValue = '#ffffff';
     this.updateTextValue = '';
     this.currentCar = 0;
+    this.fps = 60;
+    this.stopCar = [];
+    this.stopped = false;
+    this.finished = [];
   }
 
   switchView() {
