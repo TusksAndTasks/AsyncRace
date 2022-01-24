@@ -24,6 +24,7 @@ class Animator {
     const commitStep = (timestamp: number) => {
       if (isEngineBroken) {
         step = 0;
+        return null;
       }
 
       if (dataStorage.stopCar.includes(id) && dataStorage.stopped === true) {
@@ -43,9 +44,24 @@ class Animator {
       }
       if (currentX < end) {
         dataStorage.finished.push(+id);
+        if (dataStorage.stateOfRace === true) {
+          dataStorage.stateOfRace = false;
+          this.showWinner(id);
+        }
       }
     };
     commitStep(0);
+  }
+
+  showWinner(id: number) {
+    const winnerBox = document.querySelector('.winnerbox') as HTMLElement;
+    const winnerInfo = document.querySelector('.winner-info') as HTMLElement;
+    const carNameBox = document.querySelector(`#select-${id} > h3`) as HTMLElement;
+    let time = +new Date() - +(dataStorage.startTime as Date);
+    time = time / 1000;
+    winnerInfo.textContent = `${carNameBox.textContent} (${time})`;
+    winnerBox.classList.remove('hidden');
+    apiController.createWinner(id, time);
   }
 }
 

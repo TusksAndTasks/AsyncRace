@@ -191,3 +191,34 @@ h3{
     background-color: rgb(70, 70, 70);
     color: white;
 }
+
+.winnerbox{
+    width: 50%;
+    height: 200px;
+    position: fixed;
+    top: 50%;
+    left: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+    background: linear-gradient(270deg, rgba(175, 30, 19, 0.3), transparent);
+    border-radius: 40px;
+}
+
+.winner-anounce,
+.winner-info{
+   font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+   color: orange;
+   font-size: 60px;
+   margin-top: 10px;
+   text-shadow: 10px 10px 10px black;
+}
+
+.winner-anounce{
+    font-style: italic;
+}
+
+.hidden{
+    display: none;
+}

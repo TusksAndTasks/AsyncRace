@@ -1,6 +1,7 @@
 import { dataStorage } from './storage';
 import { Car } from './interfaces';
 import { EngineStatus } from './interfaces';
+import { Winner } from './interfaces';
 
 class ApiControls {
   async getGaragePage(page: number): Promise<void | Array<Car>> {
@@ -104,6 +105,54 @@ class ApiControls {
     try {
       const res = await fetch(`http://127.0.0.1:3000/engine?id=${id}&status=stopped`, {
         method: 'PATCH',
+      });
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async createWinner(id: number, time: number) {
+    const checkResponse = await this.checkWinner(id);
+    if (typeof checkResponse !== 'number' && typeof checkResponse !== 'undefined') {
+      console.log(checkResponse.wins, time);
+      this.updateWinner(id, +checkResponse.wins + 1, time < checkResponse.time ? time : checkResponse.time);
+    }
+    if (checkResponse === 404) {
+      console.log(checkResponse);
+      try {
+        await fetch('http://127.0.0.1:3000/winners', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: id, wins: 1, time: time }),
+        });
+      } catch (err) {
+        throw err;
+      }
+    }
+  }
+
+  async checkWinner(id: number) {
+    try {
+      const res = await fetch(`http://127.0.0.1:3000/winners/${id}`, {
+        method: 'GET',
+      });
+      if (res.ok) {
+        return (await res.json()) as Winner;
+      }
+      if (res.status === 404) {
+        return 404;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async updateWinner(id: number, wins: number, time: number) {
+    try {
+      await fetch(`http://127.0.0.1:3000/winners/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ wins: wins, time: time }),
       });
     } catch (err) {
       throw err;

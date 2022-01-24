@@ -22,6 +22,7 @@ class Render {
       listener.setPageListeners();
       listener.setRaceListener();
       listener.setRaceResetListener();
+      listener.setHideWinnerListener();
     }
     if (dataStorage.view === 'winners') {
       this.renderWinners();
@@ -61,6 +62,10 @@ class Render {
           <div class="commit-button" id="generate">Generate cars</div>
       </div>
   </div>
+  <div class="winnerbox hidden">
+  <div class="winner-anounce">And the winner is...</div>
+  <p class="winner-info"></p>
+</div>
   <div class="garage-section">
   </div>
   <div class="page-select">

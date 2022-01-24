@@ -130,7 +130,9 @@ export default class {
   async driveStarter(id: number) {
     const startButton = document.querySelector(`[data-start="${id}"]`) as HTMLElement;
     const stopButton = document.querySelector(`[data-stop="${id}"]`) as HTMLElement;
+    const car = document.querySelector(`#car-${id}`) as SvgInHtml;
     const response = await apiController.startEngine(+id);
+    car.setAttribute('transform', 'matrix(0.2 0 0 0.2 25 5.5) scale(-1,1) translate(0)');
     startButton.classList.add('disabled');
     stopButton.classList.remove('disabled');
     animator.animateCar(+id, (response as EngineStatus).distance, (response as EngineStatus).velocity);
@@ -152,6 +154,7 @@ export default class {
   async driveStopper(id: number) {
     const stopButton = document.querySelector(`[data-stop="${id}"]`) as HTMLElement;
     const startButton = document.querySelector(`[data-start="${id}"]`) as HTMLElement;
+    const car = document.querySelector(`#car-${id}`) as SvgInHtml;
     stopButton.classList.add('disabled');
     apiController.stopEngine(id).then(() => {
       dataStorage.stopCar.push(+id);
@@ -160,12 +163,12 @@ export default class {
       if (dataStorage.finished.includes(+id)) {
         const index = dataStorage.stopCar.indexOf(+id);
         const indexF = dataStorage.finished.indexOf(+id);
-        const car = document.querySelector(`#car-${id}`) as SvgInHtml;
         car.setAttribute('transform', 'matrix(0.2 0 0 0.2 25 5.5) scale(-1,1) translate(0)');
         dataStorage.stopCar.splice(index, 1);
         dataStorage.finished.splice(indexF, 1);
         dataStorage.stopped = false;
       }
+      car.setAttribute('transform', 'matrix(0.2 0 0 0.2 25 5.5) scale(-1,1) translate(0)');
       startButton.classList.remove('disabled');
     });
   }
@@ -188,6 +191,8 @@ export default class {
 
     raceButton.addEventListener('click', () => {
       if (!raceButton.classList.contains('disabledButton')) {
+        dataStorage.startTime = new Date();
+        dataStorage.stateOfRace = true;
         raceButton.classList.add('disabledButton');
         Promise.all(this.startRace()).then(() => resetButton.classList.remove('disabledButton'));
       }
@@ -214,6 +219,16 @@ export default class {
       if (!resetButton.classList.contains('disabledButton')) {
         resetButton.classList.add('disabledButton');
         Promise.all(this.stopRace()).then(() => raceButton.classList.remove('disabledButton'));
+      }
+    });
+  }
+
+  setHideWinnerListener() {
+    const winner = document.querySelector('.winnerbox') as HTMLElement;
+
+    document.addEventListener('click', function (event) {
+      if (!winner.classList.contains('hidden') && event.target !== winner) {
+        winner.classList.add('hidden');
       }
     });
   }

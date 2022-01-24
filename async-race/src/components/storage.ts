@@ -27,6 +27,10 @@ class Storage {
 
   finished: Array<number>;
 
+  stateOfRace: boolean;
+
+  startTime?: Date;
+
   constructor() {
     this.carCount = 0;
     this.garagePage = 1;
@@ -42,6 +46,8 @@ class Storage {
     this.stopCar = [];
     this.stopped = false;
     this.finished = [];
+    this.stateOfRace = false;
+    this.startTime = undefined;
   }
 
   switchView() {
