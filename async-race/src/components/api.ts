@@ -18,7 +18,7 @@ class ApiControls {
     }
   }
 
-  async createNewCar(name: string, color: string) {
+  async createNewCar(name: string, color: string): Promise<Car | undefined> {
     try {
       const res = await fetch('http://127.0.0.1:3000/garage', {
         method: 'POST',
@@ -26,14 +26,14 @@ class ApiControls {
         body: JSON.stringify({ name: name, color: color }),
       });
       if (res.ok) {
-        return await res.json();
+        return (await res.json()) as Car;
       }
     } catch (err) {
       throw err;
     }
   }
 
-  async getCarInfo(id: number) {
+  async getCarInfo(id: number): Promise<void> {
     try {
       const updateText = document.getElementById('update-text') as HTMLInputElement;
       const updateColor = document.getElementById('update-color') as HTMLInputElement;
@@ -50,7 +50,7 @@ class ApiControls {
     }
   }
 
-  async getCarInfoForWinners(id: number) {
+  async getCarInfoForWinners(id: number): Promise<Array<Car> | undefined> {
     try {
       const res = await fetch(`http://127.0.0.1:3000/garage?id=${id}`, {
         method: 'GET',
@@ -63,7 +63,7 @@ class ApiControls {
     }
   }
 
-  async updateCarInfo(id: number, name: string, color: string) {
+  async updateCarInfo(id: number, name: string, color: string): Promise<void> {
     try {
       await fetch(`http://127.0.0.1:3000/garage/${id}`, {
         method: 'PUT',
@@ -75,7 +75,7 @@ class ApiControls {
     }
   }
 
-  async deleteCar(id: number) {
+  async deleteCar(id: number): Promise<void> {
     try {
       await fetch(`http://127.0.0.1:3000/garage/${id}`, {
         method: 'DELETE',
@@ -85,7 +85,7 @@ class ApiControls {
     }
   }
 
-  async startEngine(id: number) {
+  async startEngine(id: number): Promise<EngineStatus | undefined> {
     try {
       const res = await fetch(`http://127.0.0.1:3000/engine?id=${id}&status=started`, {
         method: 'PATCH',
@@ -98,7 +98,7 @@ class ApiControls {
     }
   }
 
-  async checkEngine(id: number) {
+  async checkEngine(id: number): Promise<boolean | undefined> {
     try {
       const res = await fetch(`http://127.0.0.1:3000/engine?id=${id}&status=drive`, {
         method: 'PATCH',
@@ -114,9 +114,9 @@ class ApiControls {
     }
   }
 
-  async stopEngine(id: number) {
+  async stopEngine(id: number): Promise<void> {
     try {
-      const res = await fetch(`http://127.0.0.1:3000/engine?id=${id}&status=stopped`, {
+      await fetch(`http://127.0.0.1:3000/engine?id=${id}&status=stopped`, {
         method: 'PATCH',
       });
     } catch (err) {
@@ -124,7 +124,7 @@ class ApiControls {
     }
   }
 
-  async createWinner(id: number, time: number) {
+  async createWinner(id: number, time: number): Promise<void> {
     const checkResponse = await this.checkWinner(id);
     if (typeof checkResponse !== 'number' && typeof checkResponse !== 'undefined') {
       this.updateWinner(id, +checkResponse.wins + 1, time < checkResponse.time ? time : checkResponse.time);
@@ -142,7 +142,7 @@ class ApiControls {
     }
   }
 
-  async checkWinner(id: number) {
+  async checkWinner(id: number): Promise<Winner | number | undefined> {
     try {
       const res = await fetch(`http://127.0.0.1:3000/winners/${id}`, {
         method: 'GET',
@@ -158,7 +158,7 @@ class ApiControls {
     }
   }
 
-  async updateWinner(id: number, wins: number, time: number) {
+  async updateWinner(id: number, wins: number, time: number): Promise<void> {
     try {
       await fetch(`http://127.0.0.1:3000/winners/${id}`, {
         method: 'PUT',
@@ -170,7 +170,7 @@ class ApiControls {
     }
   }
 
-  async getWinners() {
+  async getWinners(): Promise<Array<Winner> | undefined> {
     try {
       const res = await fetch(
         `http://127.0.0.1:3000/winners?_page=${dataStorage.winnersPage}&_limit=10&_sort=${dataStorage.sort}&_order=${dataStorage.order}`,
@@ -187,7 +187,7 @@ class ApiControls {
     }
   }
 
-  async deleteWinner(id: number) {
+  async deleteWinner(id: number): Promise<void> {
     try {
       await fetch(`http://127.0.0.1:3000/winners/${id}`, {
         method: 'DELETE',

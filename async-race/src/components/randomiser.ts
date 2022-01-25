@@ -1,4 +1,4 @@
-import { RandomCarParts } from './interfaces';
+import { Car } from './interfaces';
 import { apiController } from './api';
 
 const modelsCars: Array<string> = [
@@ -116,7 +116,7 @@ class Randomiser {
     return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
   }
 
-  getRandomCars() {
+  getRandomCars(): Array<Promise<Car | undefined>> {
     const cars = [];
 
     for (let i = 0; i < 100; i++) {

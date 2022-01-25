@@ -13,7 +13,7 @@ class Render {
     this.body = document.querySelector('body') as HTMLElement;
   }
 
-  renderView() {
+  renderView(): void {
     if (dataStorage.view === 'garage') {
       this.renderGarage();
       this.updateCars();
@@ -34,7 +34,7 @@ class Render {
     }
   }
 
-  updateCars() {
+  updateCars(): void {
     this.createCars()
       .then(() => listener.setSelectListeners())
       .then(() => listener.setRemoveListeners())
@@ -42,7 +42,7 @@ class Render {
       .then(() => listener.setStopListeners());
   }
 
-  renderGarage() {
+  renderGarage(): void {
     this.body.innerHTML = `<header>
       <nav>
           <div class="nav-button" id="garage-view">To garage</div>
@@ -78,7 +78,7 @@ class Render {
   </div>`;
   }
 
-  renderWinners() {
+  renderWinners(): void {
     this.body.innerHTML = `<header>
     <nav>
         <div class="nav-button" id="garage-view">To garage</div>
@@ -114,7 +114,7 @@ class Render {
    </div>`;
   }
 
-  async createCars() {
+  async createCars(): Promise<void> {
     const cars = await apiController.getGaragePage(dataStorage.garagePage);
     const garageSection = document.querySelector('.garage-section') as HTMLElement;
     garageSection.innerHTML = `<h1>Garage (${dataStorage.carCount})</h1>

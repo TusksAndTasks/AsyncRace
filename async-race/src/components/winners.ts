@@ -4,7 +4,7 @@ import { Car } from './interfaces';
 import { dataStorage } from './storage';
 
 class Winners {
-  async createWinners(winnerList: Array<Winner>) {
+  async createWinners(winnerList: Array<Winner>): Promise<void> {
     const number = document.querySelector('.number-column') as HTMLElement;
     const car = document.querySelector('.car-column') as HTMLElement;
     const name = document.querySelector('.name-column') as HTMLElement;

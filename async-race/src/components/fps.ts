@@ -13,7 +13,7 @@ class FpsCounter {
     this.counter = 0;
   }
 
-  refreshLoop() {
+  refreshLoop(): void {
     window.requestAnimationFrame(() => {
       const now = performance.now();
       while (this.times.length > 0 && this.times[0] <= now - 1000) {

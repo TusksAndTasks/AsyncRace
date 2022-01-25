@@ -3,7 +3,7 @@ import { apiController } from './api';
 import { dataStorage } from './storage';
 
 class Animator {
-  animateCar(id: number, distance: number, velocity: number) {
+  animateCar(id: number, distance: number, velocity: number): void {
     const car = document.querySelector(`#car-${id}`) as SvgInHtml;
 
     const start = 0;
@@ -11,7 +11,7 @@ class Animator {
     let currentX = start;
     let isEngineBroken = false;
 
-    async function sendDirveCheck() {
+    async function sendDirveCheck(): Promise<void> {
       isEngineBroken = (await apiController.checkEngine(id)) as boolean;
     }
     sendDirveCheck();
@@ -19,10 +19,10 @@ class Animator {
     const time = (Math.ceil(distance / velocity) / 1000) * dataStorage.fps;
     let step = 1200 / time;
 
-    const commitStep = (timestamp: number) => {
+    const commitStep = (timestamp: number): null | undefined | number => {
       if (isEngineBroken) {
         step = 0;
-        return null;
+        return timestamp;
       }
 
       if (dataStorage.stopCar.includes(id) && dataStorage.stopped === true) {
@@ -51,7 +51,7 @@ class Animator {
     commitStep(0);
   }
 
-  showWinner(id: number) {
+  showWinner(id: number): void {
     const winnerBox = document.querySelector('.winnerbox') as HTMLElement;
     const winnerInfo = document.querySelector('.winner-info') as HTMLElement;
     const carNameBox = document.querySelector(`#select-${id} > h3`) as HTMLElement;
