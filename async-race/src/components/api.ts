@@ -50,6 +50,19 @@ class ApiControls {
     }
   }
 
+  async getCarInfoForWinners(id: number) {
+    try {
+      const res = await fetch(`http://127.0.0.1:3000/garage?id=${id}`, {
+        method: 'GET',
+      });
+      if (res.ok) {
+        return (await res.json()) as Array<Car>;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async updateCarInfo(id: number, name: string, color: string) {
     try {
       await fetch(`http://127.0.0.1:3000/garage/${id}`, {
@@ -114,11 +127,9 @@ class ApiControls {
   async createWinner(id: number, time: number) {
     const checkResponse = await this.checkWinner(id);
     if (typeof checkResponse !== 'number' && typeof checkResponse !== 'undefined') {
-      console.log(checkResponse.wins, time);
       this.updateWinner(id, +checkResponse.wins + 1, time < checkResponse.time ? time : checkResponse.time);
     }
     if (checkResponse === 404) {
-      console.log(checkResponse);
       try {
         await fetch('http://127.0.0.1:3000/winners', {
           method: 'POST',
@@ -153,6 +164,33 @@ class ApiControls {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ wins: wins, time: time }),
+      });
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async getWinners() {
+    try {
+      const res = await fetch(
+        `http://127.0.0.1:3000/winners?_page=${dataStorage.winnersPage}&_limit=10&_sort=${dataStorage.sort}&_order=${dataStorage.order}`,
+        {
+          method: 'GET',
+        },
+      );
+      if (res.ok) {
+        dataStorage.winnersCount = +(res.headers.get('X-Total-Count') as string);
+        return (await res.json()) as Array<Winner>;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async deleteWinner(id: number) {
+    try {
+      await fetch(`http://127.0.0.1:3000/winners/${id}`, {
+        method: 'DELETE',
       });
     } catch (err) {
       throw err;

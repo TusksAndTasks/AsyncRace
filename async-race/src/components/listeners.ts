@@ -3,8 +3,9 @@ import { dataStorage } from './storage';
 import { apiController } from './api';
 import { randomiser } from './randomiser';
 import { animator } from './animation';
-import { EngineStatus } from './interfaces';
+import { EngineStatus, Winner } from './interfaces';
 import { SvgInHtml } from './animation';
+import { winners } from './winners';
 
 export default class {
   setViewListeners() {
@@ -21,6 +22,7 @@ export default class {
     });
     winnersButton.addEventListener('click', function (): void {
       dataStorage.view = 'winners';
+      // dataStorage.refresh();
       render.renderView();
       dataStorage.updateTextValue = updateText.value;
       dataStorage.updateColorValue = updateColor.value;
@@ -61,7 +63,9 @@ export default class {
 
     removeButtons.forEach((elem: Node) => {
       (elem as HTMLElement).addEventListener('click', async function () {
-        apiController.deleteCar(+((elem as HTMLElement).dataset.remove as string)).then(() => render.updateCars());
+        const id = +((elem as HTMLElement).dataset.remove as string);
+        apiController.deleteCar(id).then(() => render.updateCars());
+        apiController.deleteWinner(id);
         dataStorage.currentCar = 0;
       });
     });
@@ -102,6 +106,7 @@ export default class {
     prevButton.addEventListener('click', function () {
       if (dataStorage.garagePage > 1) {
         dataStorage.garagePage -= 1;
+        //dataStorage.refresh();
         render.updateCars();
       }
     });
@@ -109,6 +114,7 @@ export default class {
     nextButton.addEventListener('click', function () {
       if (dataStorage.garagePage < Math.ceil(dataStorage.carCount / 7)) {
         dataStorage.garagePage += 1;
+        //dataStorage.refresh();
         render.updateCars();
       }
     });
@@ -131,9 +137,9 @@ export default class {
     const startButton = document.querySelector(`[data-start="${id}"]`) as HTMLElement;
     const stopButton = document.querySelector(`[data-stop="${id}"]`) as HTMLElement;
     const car = document.querySelector(`#car-${id}`) as SvgInHtml;
+    startButton.classList.add('disabled');
     const response = await apiController.startEngine(+id);
     car.setAttribute('transform', 'matrix(0.2 0 0 0.2 25 5.5) scale(-1,1) translate(0)');
-    startButton.classList.add('disabled');
     stopButton.classList.remove('disabled');
     animator.animateCar(+id, (response as EngineStatus).distance, (response as EngineStatus).velocity);
   }
@@ -159,7 +165,6 @@ export default class {
     apiController.stopEngine(id).then(() => {
       dataStorage.stopCar.push(+id);
       dataStorage.stopped = true;
-      console.log(dataStorage.finished);
       if (dataStorage.finished.includes(+id)) {
         const index = dataStorage.stopCar.indexOf(+id);
         const indexF = dataStorage.finished.indexOf(+id);
@@ -191,10 +196,11 @@ export default class {
 
     raceButton.addEventListener('click', () => {
       if (!raceButton.classList.contains('disabledButton')) {
+        dataStorage.stopped = false;
         dataStorage.startTime = new Date();
         dataStorage.stateOfRace = true;
+        Promise.allSettled(this.startRace()).then(() => resetButton.classList.remove('disabledButton'));
         raceButton.classList.add('disabledButton');
-        Promise.all(this.startRace()).then(() => resetButton.classList.remove('disabledButton'));
       }
     });
   }
@@ -217,8 +223,12 @@ export default class {
 
     resetButton.addEventListener('click', () => {
       if (!resetButton.classList.contains('disabledButton')) {
-        resetButton.classList.add('disabledButton');
-        Promise.all(this.stopRace()).then(() => raceButton.classList.remove('disabledButton'));
+        Promise.all(this.stopRace()).then(() => {
+          setTimeout(() => {
+            resetButton.classList.add('disabledButton');
+            raceButton.classList.remove('disabledButton');
+          }, 3000);
+        });
       }
     });
   }
@@ -229,6 +239,116 @@ export default class {
     document.addEventListener('click', function (event) {
       if (!winner.classList.contains('hidden') && event.target !== winner) {
         winner.classList.add('hidden');
+      }
+    });
+  }
+
+  setWinnersListeners() {
+    this.setNumberListener();
+    this.setWinsListener();
+    this.setTimeListener();
+    this.setWinnersPageListeners();
+  }
+
+  setNumberListener() {
+    const number = document.querySelector('#win-num') as HTMLElement;
+    const wins = document.querySelector('#win-win') as HTMLElement;
+    const time = document.querySelector('#win-time') as HTMLElement;
+
+    number.addEventListener('click', function () {
+      time.classList.remove(dataStorage.order === 'ASC' ? 'usual' : 'reverse');
+      wins.classList.remove(dataStorage.order === 'ASC' ? 'usual' : 'reverse');
+      if (number.classList.contains('usual')) {
+        number.classList.remove('usual');
+        dataStorage.order = 'DESC';
+        number.classList.add('reverse');
+        apiController.getWinners().then((res) => winners.createWinners(res as Array<Winner>));
+        return;
+      }
+      if (number.classList.contains('reverse')) {
+        number.classList.remove('reverse');
+        dataStorage.order = 'ASC';
+        number.classList.add('usual');
+        apiController.getWinners().then((res) => winners.createWinners(res as Array<Winner>));
+      } else {
+        dataStorage.sort = 'id';
+        number.classList.add(dataStorage.order === 'ASC' ? 'usual' : 'reverse');
+        apiController.getWinners().then((res) => winners.createWinners(res as Array<Winner>));
+      }
+    });
+  }
+
+  setWinsListener() {
+    const wins = document.querySelector('#win-win') as HTMLElement;
+    const number = document.querySelector('#win-num') as HTMLElement;
+    const time = document.querySelector('#win-time') as HTMLElement;
+
+    wins.addEventListener('click', function () {
+      time.classList.remove(dataStorage.order === 'ASC' ? 'usual' : 'reverse');
+      number.classList.remove(dataStorage.order === 'ASC' ? 'usual' : 'reverse');
+      if (wins.classList.contains('usual')) {
+        wins.classList.remove('usual');
+        dataStorage.order = 'DESC';
+        wins.classList.add('reverse');
+        apiController.getWinners().then((res) => winners.createWinners(res as Array<Winner>));
+        return;
+      }
+      if (wins.classList.contains('reverse')) {
+        wins.classList.remove('reverse');
+        dataStorage.order = 'ASC';
+        wins.classList.add('usual');
+        apiController.getWinners().then((res) => winners.createWinners(res as Array<Winner>));
+      } else {
+        dataStorage.sort = 'wins';
+        wins.classList.add(dataStorage.order === 'ASC' ? 'usual' : 'reverse');
+        apiController.getWinners().then((res) => winners.createWinners(res as Array<Winner>));
+      }
+    });
+  }
+
+  setTimeListener() {
+    const time = document.querySelector('#win-time') as HTMLElement;
+    const wins = document.querySelector('#win-win') as HTMLElement;
+    const number = document.querySelector('#win-num') as HTMLElement;
+
+    time.addEventListener('click', function () {
+      number.classList.remove(dataStorage.order === 'ASC' ? 'usual' : 'reverse');
+      wins.classList.remove(dataStorage.order === 'ASC' ? 'usual' : 'reverse');
+      if (time.classList.contains('usual')) {
+        time.classList.remove('usual');
+        dataStorage.order = 'DESC';
+        time.classList.add('reverse');
+        apiController.getWinners().then((res) => winners.createWinners(res as Array<Winner>));
+        return;
+      }
+      if (time.classList.contains('reverse')) {
+        time.classList.remove('reverse');
+        dataStorage.order = 'ASC';
+        time.classList.add('usual');
+        apiController.getWinners().then((res) => winners.createWinners(res as Array<Winner>));
+      } else {
+        dataStorage.sort = 'time';
+        time.classList.add(dataStorage.order === 'ASC' ? 'usual' : 'reverse');
+        apiController.getWinners().then((res) => winners.createWinners(res as Array<Winner>));
+      }
+    });
+  }
+
+  setWinnersPageListeners() {
+    const prevButton = document.getElementById('win-prev') as HTMLElement;
+    const nextButton = document.getElementById('win-next') as HTMLElement;
+
+    prevButton.addEventListener('click', function () {
+      if (dataStorage.winnersPage > 1) {
+        dataStorage.winnersPage -= 1;
+        apiController.getWinners().then((res) => winners.createWinners(res as Array<Winner>));
+      }
+    });
+
+    nextButton.addEventListener('click', function () {
+      if (dataStorage.winnersPage < Math.ceil(dataStorage.winnersCount / 10)) {
+        dataStorage.winnersPage += 1;
+        apiController.getWinners().then((res) => winners.createWinners(res as Array<Winner>));
       }
     });
   }

@@ -102,9 +102,9 @@ h2{
 }
 
 .winners-container{
-    width: 500px;
+    width: 600px;
     display: flex;
-    flex-flow: row;
+    flex-flow: column;
 }
 
 .number-column,
@@ -114,17 +114,40 @@ h2{
 .time-column{
     display: flex;
     flex-flow: column;
-    width: 100px;
+    width: 120px;
     box-sizing: border-box;
     border-left: 2px orange solid;
     border-right: 2px orange solid;
+    color: white;
+    justify-content: space-between;
+}
+
+
+#win-num,
+#win-win,
+#win-time{
+    cursor: pointer;
 }
 
 .column-description{
     background-color: rgb(252, 188, 69);
-    text-align: center;
+    text-align: start;
     height: 30px;
-    font-size: 25px;
+    font-size: 23px;
+    background-size: 20px;
+    background-repeat: no-repeat;
+    background-position: right;
+    background-image: none;
+    color: black;
+    width: 120px;
+}
+
+.reverse{
+   background-image: url('Arrow-up.png');
+}
+
+.usual{
+    background-image: url('Arrow-down.svg');
 }
 
 .select-buttons{
@@ -221,4 +244,14 @@ h3{
 
 .hidden{
     display: none;
+}
+
+.descriptor-box{
+    display: flex;
+    flex-flow: row;
+}
+
+.column-box{
+    display: flex;
+    flex-flow: row;
 }

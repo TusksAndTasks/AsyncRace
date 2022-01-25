@@ -31,6 +31,10 @@ class Storage {
 
   startTime?: Date;
 
+  sort: string;
+
+  order: string;
+
   constructor() {
     this.carCount = 0;
     this.garagePage = 1;
@@ -48,6 +52,8 @@ class Storage {
     this.finished = [];
     this.stateOfRace = false;
     this.startTime = undefined;
+    this.sort = 'id';
+    this.order = 'ASC';
   }
 
   switchView() {
@@ -57,6 +63,15 @@ class Storage {
     if (this.view === 'winners') {
       this.view = 'garage';
     }
+  }
+
+  refresh() {
+    this.currentCar = 0;
+    this.stopCar = [];
+    this.stopped = false;
+    this.finished = [];
+    this.stateOfRace = false;
+    this.startTime = undefined;
   }
 }
 

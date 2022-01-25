@@ -3,6 +3,8 @@ import listeners from './listeners';
 import { apiController } from './api';
 import { Car } from './interfaces';
 const listener = new listeners();
+import { winners } from './winners';
+import { Winner } from './interfaces';
 
 class Render {
   body: HTMLElement;
@@ -26,7 +28,9 @@ class Render {
     }
     if (dataStorage.view === 'winners') {
       this.renderWinners();
+      apiController.getWinners().then((res) => winners.createWinners(res as Array<Winner>));
       listener.setViewListeners();
+      listener.setWinnersListeners();
     }
   }
 
@@ -81,35 +85,38 @@ class Render {
         <div class="nav-button" id="winners-view">To winners</div>
     </nav>
    </header>
-   <h1>Winners (0)</h1>
+   <h1>Winners <span>WAIT</span></h1>
    <h2>Page #1</h2>
    <div class="winners-container">
+   <div class="descriptor-box">
+   <div class="column-description usual" id="win-num">Number</div>
+   <div class="column-description" id="win-car">Car</div>
+   <div class="column-description" id="win-name">Name</div>
+   <div class="column-description" id="win-win">Wins</div>
+   <div class="column-description" id="win-time">Time</div>
+   </div>
+   <div class="column-box">
        <div class="number-column">
-           <div class="column-description">Number</div>
        </div>
        <div class="car-column">
-           <div class="column-description">Car</div>
        </div>
        <div class="name-column">
-           <div class="column-description">Name</div>
        </div>
        <div class="wins-column">
-           <div class="column-description">Wins</div>
        </div>
        <div class="time-column">
-           <div class="column-description">Time</div>
        </div>
+   </div>    
    </div>
    <div class="page-select">
-       <div class="commit-button">Prev</div>
-       <div class="commit-button">Next</div>
+       <div class="commit-button" id="win-prev">Prev</div>
+       <div class="commit-button" id="win-next">Next</div>
    </div>`;
   }
 
   async createCars() {
     const cars = await apiController.getGaragePage(dataStorage.garagePage);
     const garageSection = document.querySelector('.garage-section') as HTMLElement;
-    console.log(cars);
     garageSection.innerHTML = `<h1>Garage (${dataStorage.carCount})</h1>
     <h2>Page #${dataStorage.garagePage}</h2>`;
 

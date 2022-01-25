@@ -19,8 +19,6 @@ class Animator {
     const time = (Math.ceil(distance / velocity) / 1000) * dataStorage.fps;
     let step = 1200 / time;
 
-    console.log(Math.ceil(distance / velocity));
-
     const commitStep = (timestamp: number) => {
       if (isEngineBroken) {
         step = 0;
